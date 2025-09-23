@@ -1,4 +1,4 @@
-import math, time
+import math, timeit
         
 def eh_curioso(n):
     n_orig = n
@@ -7,15 +7,16 @@ def eh_curioso(n):
         d = n % 10
         n = n // 10
         soma_fatorial += fats[d]
-        if soma_fatorial > n_orig: return False
     return soma_fatorial == n_orig
 
+def gen_curiosos():
+    n = 10
+    while n <= 2540160:
+        if eh_curioso(n):
+            print (n)
+        n += 1
+    
 fats = [math.factorial(n) for n in range(0, 10)]
-
-n = 10
-while n <= 2540160:
-    if eh_curioso(n):
-        print ("\n",n)
-    n += 1
-    if n % 1000 == 0:
-        print (end=".", flush=True)
+t1 = timeit.default_timer()
+gen_curiosos()
+print (f"Tempo: {timeit.default_timer()-t1}s")
