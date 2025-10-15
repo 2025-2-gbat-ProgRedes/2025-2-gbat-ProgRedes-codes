@@ -3,7 +3,8 @@ def decode_metadata(metadata):
     tipo_metadata = int.from_bytes(metadata[2:4], endianess)
     repeats = int.from_bytes(metadata[4:8], endianess)
     value_metadata = metadata[8:]
-    print (f"0x{id_metadata:x} {tipo_metadata} {repeats} {value_metadata}")
+    print (f"0x{id_metadata:x} {tipo_metadata}" +
+           f"{repeats} {value_metadata}")
 
 def read_metadata(metadata_pos):
     fd.seek (metadata_pos)
@@ -42,4 +43,7 @@ def main(file_name):
     fd.close()
 
 if __name__ == '__main__':
-    main("Tania.jpg")
+    try:
+        main("Tania.jpg")
+    except Exception as e:
+        print (f"Erro: ", e)
