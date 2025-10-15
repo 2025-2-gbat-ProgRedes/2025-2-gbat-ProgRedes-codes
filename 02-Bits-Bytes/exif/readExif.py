@@ -1,10 +1,17 @@
+import constants
+
 def decode_metadata(metadata):
-    id_metadata = int.from_bytes(metadata[:2], endianess)
-    tipo_metadata = int.from_bytes(metadata[2:4], endianess)
-    repeats = int.from_bytes(metadata[4:8], endianess)
-    value_metadata = metadata[8:]
-    print (f"0x{id_metadata:x} {tipo_metadata}" +
-           f"{repeats} {value_metadata}")
+    tag_number = int.from_bytes(metadata[:2], endianess)
+    tag_name = constants.TAG_NUMBER.get(tag_number, "Não ident.")
+    
+    tag_type  = int.from_bytes(metadata[2:4], endianess)
+    tag_type_name = constants.TAG_TYPE.get(tag_type, "Não ident.")
+    
+    tag_reps = int.from_bytes(metadata[4:8], endianess)
+    tag_value  = metadata[8:]
+    print (f"{tag_name} (0x{tag_number:x}) "+
+           f"{tag_type_name} ({tag_type}) " +
+           f"{tag_reps} {tag_value}")
 
 def read_metadata(metadata_pos):
     fd.seek (metadata_pos)
@@ -12,7 +19,7 @@ def read_metadata(metadata_pos):
     for _ in range(num_metadata):
         decode_metadata(fd.read(12))
 
-def readExif():
+def read_exif():
     global endianess, tiff_header_pos
     sec_len = fd.read(2)
     fd.seek(6, 1)   # pula o EXIF Header
@@ -28,7 +35,7 @@ def readExif():
     metadata_begin = int.from_bytes(tiff_header[4:], endianess)
     read_metadata(metadata_begin + tiff_header_pos)
     
-def main(file_name):
+def exif_show(file_name):
     global fd
     
     fd = open (file_name, "rb")
@@ -37,13 +44,13 @@ def main(file_name):
     
     sectionHeader = fd.read(2)
     if sectionHeader == b"\xFF\xE1":
-        readExif()
+        read_exif()
     else:
         raise Exception("Não tem EXIF!")
     fd.close()
 
 if __name__ == '__main__':
     try:
-        main("Tania.jpg")
+        exif_show("Tania.jpg")
     except Exception as e:
         print (f"Erro: ", e)
